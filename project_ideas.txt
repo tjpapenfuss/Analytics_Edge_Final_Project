@@ -1,0 +1,6 @@
+Eurpoean soccer. https://www.kaggle.com/datasets/hugomathien/soccer
+
+Housing prices. Way more complex. We would need to look at multiple data sets. Figure out a way to combine and predict. https://fred.stlouisfed.org/series/USSTHPI; https://fred.stlouisfed.org/series/MSPUS
+
+Predict renewable energy usage? https://www.statista.com/statistics/499169/cumulative-capacity-of-renewables-in-the-us/
+
