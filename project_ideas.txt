@@ -24,5 +24,8 @@ Predict OPEC Output Cuts
 Beer data sets:
 Main dataset from Beer advocate: https://www.kaggle.com/datasets/thedevastator/1-5-million-beer-reviews-from-beer-advocate
 
-
+Brewweries and brew pubs: https://data.world/datafiniti/breweries-brew-pubs-in-the-usa
+Beer database: https://github.com/philipperemy/beer-dataset
 https://www.kaggle.com/datasets/nickhould/craft-cans
+https://www-statista-com.libproxy.mit.edu/statistics/257677/global-market-share-of-the-leading-beer-companies-based-on-sales/
+
