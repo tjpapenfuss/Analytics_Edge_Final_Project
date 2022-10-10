@@ -4,3 +4,16 @@ Housing prices. Way more complex. We would need to look at multiple data sets. F
 
 Predict renewable energy usage? https://www.statista.com/statistics/499169/cumulative-capacity-of-renewables-in-the-us/
 
+Prodict interest rate for US Treasure I-Bonds
+	-What is an i bond? https://www.forbes.com/advisor/investing/what-are-i-bonds/
+      -New rate is issued every May 1 and Novemeber 1.
+	-It would be good to know what the next 6 months interest rate will be ahead of time to influence investmenets
+	-Based on CPI data: https://www.bls.gov/news.release/cpi.t01.htm
+	-This project may take an effort to clean up the data and normalize
+      -Maybe this project is too simple?
+
+Predict OPEC Output Cuts
+	- More like a logistic regression problem where prediciton with be Cut/ No cut
+	- Data: https://asb.opec.org/data/ASB_Data.php
+	- Not sure if there have been enough cuts over the data sets.There has been lots of growth over the last couple decades
+	- Would need to bring in additional data like rig counts, global storage capacity, etc
