@@ -17,3 +17,12 @@ Predict OPEC Output Cuts
 	- Data: https://asb.opec.org/data/ASB_Data.php
 	- Not sure if there have been enough cuts over the data sets.There has been lots of growth over the last couple decades
 	- Would need to bring in additional data like rig counts, global storage capacity, etc
+
+
+
+
+Beer data sets:
+Main dataset from Beer advocate: https://www.kaggle.com/datasets/thedevastator/1-5-million-beer-reviews-from-beer-advocate
+
+
+https://www.kaggle.com/datasets/nickhould/craft-cans
