@@ -24,6 +24,9 @@ Predict OPEC Output Cuts
 Beer data sets:
 Main dataset from Beer advocate: https://www.kaggle.com/datasets/thedevastator/1-5-million-beer-reviews-from-beer-advocate
 
+Craft can database: https://github.com/nickhould/craft-beers-dataset/blob/master/notebooks/Craft_Beers_and_Data_Science_-_Part_1_-_Scraping_a_Dataset.ipynb
+https://www-statista-com.libproxy.mit.edu/study/20232/craft-beer-in-the-us-statista-dossier/
+
 Brewweries and brew pubs: https://data.world/datafiniti/breweries-brew-pubs-in-the-usa
 Beer database: https://github.com/philipperemy/beer-dataset
 https://www.kaggle.com/datasets/nickhould/craft-cans
