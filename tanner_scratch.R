@@ -1,5 +1,8 @@
 # ----------------------------------------------------------------------------------------
-##### Problem 3: eBay.com
+##### Project outline
+##### Predicting review score via CART
+##### Predicting beer score for a brewery releasing a new beer via logistic regression
+##### 
 # ----------------------------------------------------------------------------------------
 library(caret)
 library(rpart)
@@ -35,7 +38,6 @@ beer.train = beer.df[split,]
 beer.test = beer.df[-split,]
 head(beer.train)
 
-
 # str(ebay.train)
 # Plotting the beer style counts. This is all beer styles
 ggplot(aes(x=beer_style.factor, y = ..count..), data = beer.df) +
@@ -45,11 +47,9 @@ ggplot(aes(x=beer_style.factor, y = ..count..), data = beer.df) +
 style_count = beer.df %>% count(beer_style, sort = TRUE)
 style_count #This gives the count of the beer styles
 
-
 #Filter beer by American IPA. This gets rid of all beers except American IPA.
 beer.ipa = filter(beer.train, beer_style == "American IPA")
 head(beer.apa)
-
 
 # Warning this pot is very convoluted. 
 ggplot(aes(x=brewery_name, y = ..count..), data = beer.ipa) +
