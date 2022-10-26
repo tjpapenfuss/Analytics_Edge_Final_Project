@@ -1,5 +1,11 @@
 # ----------------------------------------------------------------------------------------
 ##### Project outline
+# ----------------------------------------------------------------------------------------
+##### Project Initialization
+##### Data can be found here: https://www.kaggle.com/datasets/rdoume/beerreviews
+##### Download the CSV file and use that as your beef.df below. 
+# ----------------------------------------------------------------------------------------
+##### Some sample ideas for testing. 
 ##### Predicting review score via CART
 ##### Predicting beer score for a brewery releasing a new beer via logistic regression
 ##### 
@@ -30,6 +36,8 @@ beer.df$beer_style.factor = as.factor(beer.df$beer_style)
 summary(beer.df)
 str(beer.df)
 
+
+
 #A question we need to ask. Do we want to split the data on the beer styles?
 #Or do we split data based on the brewery? How do we want to present the data?
 set.seed(123)
@@ -44,8 +52,13 @@ ggplot(aes(x=beer_style.factor, y = ..count..), data = beer.df) +
   geom_bar(stat = "count") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
+#This gets the count of each unique beer style
 style_count = beer.df %>% count(beer_style, sort = TRUE)
 style_count #This gives the count of the beer styles
+
+#This gets the nubmer of reviews for each unique profile name
+profiles_count = beer.df %>% count(review_profilename, sort = TRUE)
+profiles_count #This gives the count of the beer styles
 
 #Filter beer by American IPA. This gets rid of all beers except American IPA.
 beer.ipa = filter(beer.train, beer_style == "American IPA")
@@ -56,6 +69,7 @@ ggplot(aes(x=brewery_name, y = ..count..), data = beer.ipa) +
   geom_bar(stat = "count") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
+#Get the unique breweries that create IPAs. 
 brewery_count = beer.ipa %>% count(brewery_name, sort = TRUE)
 brewery_count #This gives the count of the beer styles
 
