@@ -24,12 +24,12 @@ library(gdata)
 # In the future we should update this to include all beers. 
 # beer.df <- read.csv("beer_reviews_truncated.csv")
 
-# The below code reads in all beers. 
-# You must put this csv file in your own directory. 
+# The below code reads in all beers.
+# You must put this csv file in your own directory.
 # DO NOT PUT THE CSV IN THE GITHUB FOLDER. You will not be able to upload it. 
-beer.df = read.csv("~/AE-FinalProj-data/beer_reviews.csv")
+beer.df = read.csv("AE-FinalProj-data/beer_reviews.csv")
 count(beer.df)
-# The below code will remove the NaNs. 
+# The below code will remove the NaNs.
 beer.df = na.omit(beer.df)
 beer.df$beer_style.factor = as.factor(beer.df$beer_style)
 
@@ -42,11 +42,10 @@ str(beer.df)
 #Or do we split data based on the brewery? How do we want to present the data?
 set.seed(123)
 split = createDataPartition(beer.df$beer_style.factor, p = 0.7, list = FALSE) 
-beer.train = beer.df[split,]
-beer.test = beer.df[-split,]
+beer.train = beer.df[split, ]
+beer.test = beer.df[-split, ]
 head(beer.train)
 
-# str(ebay.train)
 # Plotting the beer style counts. This is all beer styles
 ggplot(aes(x=beer_style.factor, y = ..count..), data = beer.df) +
   geom_bar(stat = "count") +
@@ -56,7 +55,7 @@ ggplot(aes(x=beer_style.factor, y = ..count..), data = beer.df) +
 style_count = beer.df %>% count(beer_style, sort = TRUE)
 style_count #This gives the count of the beer styles
 
-#This gets the nubmer of reviews for each unique profile name
+#This gets the number of reviews for each unique profile name
 profiles_count = beer.df %>% count(review_profilename, sort = TRUE)
 profiles_count #This gives the count of the beer styles
 
@@ -64,22 +63,43 @@ profiles_count #This gives the count of the beer styles
 beer.ipa = filter(beer.train, beer_style == "American IPA")
 head(beer.apa)
 
-# Warning this pot is very convoluted. 
-ggplot(aes(x=brewery_name, y = ..count..), data = beer.ipa) +
-  geom_bar(stat = "count") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+# # Warning this pot is very convoluted.
+# ggplot(aes(x=brewery_name, y = ..count..), data = beer.ipa) +
+#   geom_bar(stat = "count") +
+#   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-#Get the unique breweries that create IPAs. 
+# #Get the unique breweries that create IPAs. 
 brewery_count = beer.ipa %>% count(brewery_name, sort = TRUE)
 brewery_count #This gives the count of the beer styles
 
-ggplot(beer.ipa, aes(x = brewery_name, y = review_overall)) + geom_point() +
-  ggtitle("Age vs. Readmission") + xlab("Age") + ylab("Readmission")
+# ggplot(beer.ipa, aes(x = brewery_name, y = review_overall)) + geom_point() +
+#   ggtitle("Age vs. Readmission") + xlab("Age") + ylab("Readmission")
 
-regressor = lm(review_overall ~ brewery_name, data = beer.ipa)
-summary(regressor)
+# Standard linear regressor. Predicting on only IPA beers and their brewery.
+# regressor = lm(review_overall ~ brewery_name, data = beer.ipa)
+# summary(regressor)
 
+# Standard linear regressor. Predicting based on all beers.
+# regressor = lm(review_overall ~ ., data = beer.train)
+# summary(regressor)
 
+# Fitting the CART model
+# This code takes quite some time to run. 
+tree <- rpart(review_overall ~ ., data = beer.train, method="class", cp=0.001)
 
+# Plotting the CART tree
+pdf('readmission_tree.pdf',12,6)
+prp(tree, varlen=0,faclen=0,digits=3)
+dev.off()
+pred <- predict(tree, newdata=readm.test, type="class")
+confusion.matrix = table(readm.test$readmission, pred)
+confusion.matrix
+TPR <- confusion.matrix[2,2]/sum(confusion.matrix[2,])
+TPR
+FPR <- confusion.matrix[1,2]/sum(confusion.matrix[1,])
+FPR
 
+#cv.trees.cart = train(SalePrice ~ ., method = "rpart", data = ames.train,
+#                      trControl = trainControl(method = "cv", number = 10), 
+#                      tuneGrid = data.frame(.cp = seq(.00002,.002,.00002)))
 

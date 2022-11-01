@@ -1,0 +1,17 @@
+#!/bin/bash
+#install R
+yum install -y R
+
+#install RStudio-Server (2022-07-02)
+wget https://download2.rstudio.org/server/bionic/amd64/rstudio-server-2022.07.2-576-amd64.deb
+yum install -y --nogpgcheck rstudio-server-2022.07.2-576-amd64.deb
+rm rstudio-server-rhel-2022.07.2-576-x86_64.rpm
+
+#add user(s)
+useradd username
+echo username:password | chpasswd
+
+
+http://44.212.32.128.compute-1.amazonaws.com:8787
+
+scp -ri "tanner_key.pem" AE-FinalProj-data ec2-user@ec2-44-212-32-128.compute-1.amazonaws.com:/home/ec2-user/Analytics_Edge_Final_Project
