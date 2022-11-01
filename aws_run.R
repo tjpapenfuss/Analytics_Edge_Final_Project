@@ -46,46 +46,8 @@ beer.train = beer.df[split, ]
 beer.test = beer.df[-split, ]
 head(beer.train)
 
-# Plotting the beer style counts. This is all beer styles
-ggplot(aes(x=beer_style.factor, y = ..count..), data = beer.df) +
-  geom_bar(stat = "count") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
-#This gets the count of each unique beer style
-style_count = beer.df %>% count(beer_style, sort = TRUE)
-style_count #This gives the count of the beer styles
-
-#This gets the number of reviews for each unique profile name
-profiles_count = beer.df %>% count(review_profilename, sort = TRUE)
-profiles_count #This gives the count of the beer styles
-
-#Filter beer by American IPA. This gets rid of all beers except American IPA.
-beer.ipa = filter(beer.train, beer_style == "American IPA")
-head(beer.apa)
-
-# # Warning this pot is very convoluted.
-# ggplot(aes(x=brewery_name, y = ..count..), data = beer.ipa) +
-#   geom_bar(stat = "count") +
-#   theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
-# #Get the unique breweries that create IPAs. 
-brewery_count = beer.ipa %>% count(brewery_name, sort = TRUE)
-brewery_count #This gives the count of the beer styles
-
-# ggplot(beer.ipa, aes(x = brewery_name, y = review_overall)) + geom_point() +
-#   ggtitle("Age vs. Readmission") + xlab("Age") + ylab("Readmission")
-
-# Standard linear regressor. Predicting on only IPA beers and their brewery.
-# regressor = lm(review_overall ~ brewery_name, data = beer.ipa)
-# summary(regressor)
-
-# Standard linear regressor. Predicting based on all beers.
-# regressor = lm(review_overall ~ ., data = beer.train)
-# summary(regressor)
-
-# Fitting the CART model
-# This code takes quite some time to run. 
 start_time <- Sys.time()
+print("CART Starting: ", start_time)
 
 tree <- rpart(review_overall ~ ., data = beer.train, method="class", cp=0.001)
 end_time <- Sys.time()
@@ -102,8 +64,3 @@ TPR <- confusion.matrix[2,2]/sum(confusion.matrix[2,])
 TPR
 FPR <- confusion.matrix[1,2]/sum(confusion.matrix[1,])
 FPR
-
-#cv.trees.cart = train(SalePrice ~ ., method = "rpart", data = ames.train,
-#                      trControl = trainControl(method = "cv", number = 10), 
-#                      tuneGrid = data.frame(.cp = seq(.00002,.002,.00002)))
-
