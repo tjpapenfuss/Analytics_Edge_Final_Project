@@ -47,9 +47,9 @@ beer.test = beer.df[-split, ]
 head(beer.train)
 
 # Plotting the beer style counts. This is all beer styles
-ggplot(aes(x=beer_style.factor, y = ..count..), data = beer.df) +
-  geom_bar(stat = "count") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+# ggplot(aes(x=beer_style.factor, y = ..count..), data = beer.df) +
+#   geom_bar(stat = "count") +
+#   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 #This gets the count of each unique beer style
 style_count = beer.df %>% count(beer_style, sort = TRUE)
