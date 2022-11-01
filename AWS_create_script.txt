@@ -14,4 +14,8 @@ echo username:password | chpasswd
 
 http://44.212.32.128.compute-1.amazonaws.com:8787
 
+#transfer files
 scp -ri "tanner_key.pem" AE-FinalProj-data ec2-user@ec2-44-212-32-128.compute-1.amazonaws.com:/home/ec2-user/Analytics_Edge_Final_Project
+
+#login
+ssh -i "tanner_key.pem" ec2-user@ec2-44-212-32-128.compute-1.amazonaws.com
