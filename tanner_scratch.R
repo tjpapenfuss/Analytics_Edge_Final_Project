@@ -86,6 +86,7 @@ brewery_count #This gives the count of the beer styles
 # Fitting the CART model
 # This code takes quite some time to run. 
 start_time <- Sys.time()
+print("CART Starting. ")
 
 tree <- rpart(review_overall ~ ., data = beer.train, method="class", cp=0.001)
 end_time <- Sys.time()

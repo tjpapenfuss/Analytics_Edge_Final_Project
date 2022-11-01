@@ -47,7 +47,7 @@ beer.test = beer.df[-split, ]
 head(beer.train)
 
 start_time <- Sys.time()
-print("CART Starting: ", start_time)
+print("CART Starting.")
 
 tree <- rpart(review_overall ~ ., data = beer.train, method="class", cp=0.001)
 end_time <- Sys.time()
