@@ -10,6 +10,10 @@
 ##### Predicting beer score for a brewery releasing a new beer via logistic regression
 ##### 
 # ----------------------------------------------------------------------------------------
+##### Ahh HA moment. Right now we have too many factors. For example, beer_style there
+##### are over 100 options. We are going to need to trim this down in order to do any meaningful
+##### simulations. 
+# ----------------------------------------------------------------------------------------
 library(caret)
 library(rpart)
 library(rpart.plot) 
@@ -31,7 +35,8 @@ beer.df = read.csv("AE-FinalProj-data/beer_reviews.csv")
 count(beer.df)
 # The below code will remove the NaNs.
 beer.df = na.omit(beer.df)
-beer.df$beer_style.factor = as.factor(beer.df$beer_style)
+# beer.df$beer_style.factor = as.factor(beer.df$beer_style)
+
 
 summary(beer.df)
 str(beer.df)
@@ -41,10 +46,35 @@ str(beer.df)
 #A question we need to ask. Do we want to split the data on the beer styles?
 #Or do we split data based on the brewery? How do we want to present the data?
 set.seed(123)
-split = createDataPartition(beer.df$beer_style.factor, p = 0.7, list = FALSE) 
+split = createDataPartition(beer.df$beer_style, p = 0.90, list = FALSE) 
 beer.train = beer.df[split, ]
 beer.test = beer.df[-split, ]
-head(beer.train)
+head(beer.test)
+df = subset(beer.test, select = -c(review_aroma,review_appearance,
+                                   review_palate,review_taste,review_time))
+df = transform(df, review_overall  = as.integer(2*df$review_overall),
+                   beer_abv        = as.integer(df$beer_abv*100))
+# df$review_overall = as.integer(2*df$review_overall)
+# df$beer_abv = as.integer(round(df$beer_abv*100, 0))
+#df = df %>% 
+#  mutate(abv_int_factor = case_when(
+#    beer_abv < 0.5 ~ 0,
+#    beer_abv < 1.5 ~ 1,
+#    beer_abv < 2.5 ~ 2,
+#    beer_abv < 3.5 ~ 3,
+#    beer_abv < 4.5 ~ 4,
+#    TRUE ~ 5))
+
+df$abv_int_factor = as.factor(df$abv_int_factor)
+
+df$brewery_id = as.factor(df$brewery_id)
+df$beer_abv = as.factor(df$beer_abv)
+str(df)
+summary(df)
+head(df)
+
+regressor = lm(review_overall ~ brewery_name, data = df)
+summary(regressor)
 
 # Plotting the beer style counts. This is all beer styles
 ggplot(aes(x=beer_style.factor, y = ..count..), data = beer.df) +
@@ -88,7 +118,7 @@ brewery_count #This gives the count of the beer styles
 start_time <- Sys.time()
 print("CART Starting. ")
 
-tree <- rpart(review_overall ~ ., data = beer.train, method="class", cp=0.001)
+tree <- rpart(review_overall ~ ., data = df, method="class", cp=0.001)
 end_time <- Sys.time()
 end_time - start_time
 print("Above is the time it took to run the CART model.")
