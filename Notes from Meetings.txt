@@ -1,0 +1,12 @@
+What is our plan for training and test sets?
+
+What sis the level of correlation between 'review_'
+
+Can we utilize the reviewer in any way?
+	-Check into top x reviews
+	-Understand impact to sample set
+
+Review score via CART
+
+Logistic Regression to predict next beer release
+	-Top x brewers by count
