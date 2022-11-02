@@ -27,7 +27,7 @@ library(gdata)
 # The below code reads in all beers. 
 # You must put this csv file in your own directory. 
 # DO NOT PUT THE CSV IN THE GITHUB FOLDER. You will not be able to upload it. 
-beer.df = read.csv("~/AE-FinalProj-data/beer_reviews.csv")
+beer.df = read.csv("C:/Users/pacae/OneDrive/Ambiente de Trabalho/Kaggle dataset/archive/beer_reviews.csv")
 count(beer.df)
 # The below code will remove the NaNs. 
 beer.df = na.omit(beer.df)
