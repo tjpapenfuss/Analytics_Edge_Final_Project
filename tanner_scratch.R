@@ -168,15 +168,30 @@ str(beer.df)
 
 
 beer_top_profiles = beer.df %>% group_by(review_profilename) %>%
-  filter(n() >= 250)
+  filter(n() >= 100)
+beer_top_beers = beer.df %>% group_by(beer_beerid) %>%
+  filter(n() >= 50)
 str(beer_top_profiles)
-uniqueID <- unique(beer_top_profiles$review_profilename)
+uniqueID.profiles <- unique(beer_top_profiles$review_profilename)
+uniqueID.beers <- unique(beer_top_beers$beer_beerid)
 
-beer_top_profiles <- beer.df[beer.df$review_profilename %in% uniqueID[], , drop = FALSE]
+beer_top_profiles <- beer.df[beer.df$review_profilename %in% uniqueID.profiles[], , drop = FALSE]
+beer_final <- beer_top_profiles[beer_top_profiles$beer_beerid %in% uniqueID.beers[], , drop = FALSE]
+
+beer_top_profiles %>%
+  group_by(review_overall) %>%
+  summarize(cases = n()) %>%
+  ggplot(aes(review_overall, cases)) + geom_col() +
+  theme_minimal() + scale_x_continuous(breaks = 0:5) 
+
+#Remove the 0 and 0.5 review outliers. 
+beer_final = beer_final[beer_final$review_overall!= 0, ]
+beer_final = beer_final[beer_final$review_overall!= 0.5, ]
+
 
 
 # First I need to get a subset of the data. This subset will have the username, beer name, and rankings 
-beer.sub = beer_top_profiles[c("review_profilename", "beer_beerid", "review_overall")]
+beer.sub = beer_final[c("review_profilename", "beer_beerid", "review_overall")]
 beer.sub$review_id= as.numeric(factor(beer.sub$review_profilename))
 # Display with dependent variable first
 
@@ -267,7 +282,7 @@ recompute <- TRUE
 
 if (recompute) {
   set.seed(144)
-  cv.all.1m.beer <- CV.recommender(beer.train, 10, 2:4)
+  cv.all.1m.beer <- CV.recommender(beer.train, 2, 2:4)
   
 } else {
   load("cv_all_1m.RData")
