@@ -341,3 +341,49 @@ for (f in seq_len(folds)) {
 base.fold <-
   sapply(seq_len(folds), function(f)
     mean(dat[fold != f, 3]))
+
+
+# ----------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------
+# Going to attempt to run a new recommender model on the data set with similarities
+# https://anderfernandez.com/en/blog/how-to-code-a-recommendation-system-in-r/
+# ----------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------
+
+# Import the data set.
+beer.df = read.csv("AE-FinalProj-data/beer_reviews.csv")
+str(beer.df)
+
+# Get the top profiles. 
+beer_top_profiles = beer.df %>% group_by(review_profilename) %>%
+  filter(n() >= 20)
+# Get the top beers by number of ratings. 
+beer_top_beers = beer.df %>% group_by(beer_beerid) %>%
+  filter(n() >= 50)
+str(beer_top_profiles)
+
+# Get the unique counts of the profiles and beers. 
+uniqueID.profiles <- unique(beer_top_profiles$review_profilename)
+uniqueID.beers <- unique(beer_top_beers$beer_beerid)
+# Remove all the profiles and beers that are small in number. 
+beer_top_profiles <- beer.df[beer.df$review_profilename %in% uniqueID.profiles[], , drop = FALSE]
+beer_final <- beer_top_profiles[beer_top_profiles$beer_beerid %in% uniqueID.beers[], , drop = FALSE]
+
+?unique
+beer_feature = unique(beer_final[c("beer_beerid", "brewery_name", "beer_style")])
+beer_feature_brewery = beer_feature[,c("brewery_name", "beer_style")]
+str(beer_feature)
+# convert to factors
+beer_feature_brewery[,1] <- as.factor(beer_feature_brewery[,1])
+beer_feature_brewery[,2] <- as.factor(beer_feature_brewery[,2])
+library(cluster)
+
+dissimilarity = daisy(beer_feature_brewery, metric = "gower", weights = c(2,0.5))
+dissimilarity = as.matrix(dissimilarity)
+
+row.names(dissimilarity)<-  beer_feature$beer_beerid
+colnames(dissimilarity)<- beer_feature$beer_beerid
+
+dissimilarity[1:20,1:20]
+
+
