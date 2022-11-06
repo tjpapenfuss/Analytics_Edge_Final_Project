@@ -21,6 +21,10 @@ library(caTools)
 library(dplyr)
 library(randomForest)
 library(gdata)
+library(softImpute)
+library(ggplot2)
+library(stringr)
+library(tidyverse)
 
 # You can use the below code however I highly recommend using the full dataset.
 # The full dataset is too big to load into GIT. You must store it locally!
@@ -41,7 +45,16 @@ beer.df = na.omit(beer.df)
 summary(beer.df)
 str(beer.df)
 
+brewery_count = beer.df %>% count(brewery_name, sort = TRUE)
+brewery_count #This gives the count of the beer styles
 
+data_new <- beer.df[order(beer.df$brewery_name, increasing = TRUE), ]  # Order data descending
+
+data_new <- Reduce(rbind,                                 # Top N highest values by group
+                    by(data_new,
+                       data_new["brewery_name"],
+                       head,
+                       n = 10))
 
 #A question we need to ask. Do we want to split the data on the beer styles?
 #Or do we split data based on the brewery? How do we want to present the data?
@@ -87,7 +100,8 @@ style_count #This gives the count of the beer styles
 
 #This gets the number of reviews for each unique profile name
 profiles_count = beer.df %>% count(review_profilename, sort = TRUE)
-profiles_count #This gives the count of the beer styles
+profiles_count #This gives the count of the profile names
+
 
 #Filter beer by American IPA. This gets rid of all beers except American IPA.
 beer.ipa = filter(beer.train, beer_style == "American IPA")
@@ -138,3 +152,174 @@ FPR
 #                      trControl = trainControl(method = "cv", number = 10), 
 #                      tuneGrid = data.frame(.cp = seq(.00002,.002,.00002)))
 
+# ----------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------
+# Going to attempt to run a recommender model on the data set
+# ----------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------
+
+beer.df = read.csv("AE-FinalProj-data/beer_reviews.csv")
+str(beer.df)
+
+#uniqueID <- unique(beer.df$review_profilename)
+#targetID <- sapply(split(beer.df, beer.df$review_profilename), function(x) nrow(x) >= 250)
+
+#beer_top_profiles <- beer.df[beer.df$review_profilename %in% uniqueID[targetID], , drop = FALSE]
+
+
+beer_top_profiles = beer.df %>% group_by(review_profilename) %>%
+  filter(n() >= 250)
+str(beer_top_profiles)
+uniqueID <- unique(beer_top_profiles$review_profilename)
+
+beer_top_profiles <- beer.df[beer.df$review_profilename %in% uniqueID[], , drop = FALSE]
+
+
+# First I need to get a subset of the data. This subset will have the username, beer name, and rankings 
+beer.sub = beer_top_profiles[c("review_profilename", "beer_beerid", "review_overall")]
+beer.sub$review_id= as.numeric(factor(beer.sub$review_profilename))
+# Display with dependent variable first
+
+beer_sub_recommender = beer.sub[c("review_id", "beer_beerid", "review_overall")]
+beer_sub_recommender$review_overall = as.numeric(beer_sub_recommender$review_overall)
+#beer_sub_recommender$review_id = as.numeric(beer_sub_recommender$review_id)
+#beer_sub_recommender = beer_sub_recommender[order(beer_sub_recommender$review_id),]
+
+beer_sub_recommender = beer_sub_recommender %>% distinct(review_id, beer_beerid, .keep_all = TRUE)
+
+set.seed(144)
+train.idx <- sample(seq_len(nrow(beer_sub_recommender)), 0.99*nrow(beer_sub_recommender))
+beer.train <- beer_sub_recommender[train.idx,]
+beer.test <- beer_sub_recommender[-train.idx,]
+
+#set.seed(123)
+#split = createDataPartition(beer_sub_recommender$review_id, p = 0.99, list = FALSE) 
+#beer.train = beer_sub_recommender[split, ]
+#beer.test = beer_sub_recommender[-split, ]
+head(beer.test)
+### The following function performs collaborative filtering and cross-validation to find the appropriate rank (k)
+# dat: data frame of ratings
+# folds: number of folds for k-fold cross-validation
+# ranks: all the ranks to be tested
+# dat should have the following form:
+# first column: user id
+# second column: movie id
+# third column: ratings
+CV.recommender <- function(dat, folds, ranks) {
+  fold <- sample(seq_len(folds), nrow(dat), replace = TRUE)
+  pred <-
+    replicate(length(ranks), rep(NA, nrow(dat)), simplify = FALSE)
+  minimum <- min(dat[, 3])
+  maximum <- max(dat[, 3])
+  for (f in seq_len(folds)) {
+    print(f)
+    mat <- Incomplete(dat[fold != f, 1], dat[fold != f, 2],
+                      dat[fold != f, 3])
+    for (r in seq_along(ranks)) {
+      fit <- softImpute(mat,
+                        rank.max = ranks[r],
+                        lambda = 0,
+                        maxit = 1000)
+      # fit$u returns the weights for all user-archetype pairs
+      # fit$v returns an indicator of the ratings for all archetype-movie pairs
+      
+      pred[[r]][fold == f] <-
+        pmin(pmax(impute(fit, dat[fold == f, 1], dat[fold == f, 2]), minimum), maximum)
+      # print(pred[[r]][fold == f])
+    }
+  }
+  # baseline: predict the average movie rating for all user-movie pairs
+  base.fold <-
+    sapply(seq_len(folds), function(f)
+      mean(dat[fold != f, 3]))
+  print("Here are the values: ")
+  print(dat[,3])
+  print("Base fold")
+  print(base.fold[f])
+  print("pred:")
+  print(pred)
+  list(
+    info = data.frame(
+      rank = ranks,
+      r2 = sapply(pred, function(x)
+        1 - sum((x - dat[, 3]) ^ 2) / sum((base.fold[f] - dat[, 3]) ^ 2)),
+      SSE = sapply(pred, function(x)
+        sum((x - dat[, 3]) ^ 2)),
+      SEETP = sapply(pred, function(x)
+        sum((base.fold[f] - dat[, 3]) ^ 2)),
+      RMSE = sapply(pred, function(x)
+        sqrt(mean((
+          x - dat[, 3]
+        ) ^ 2))),
+      MAE = sapply(pred, function(x)
+        mean(abs(x - dat[, 3])))
+    ),
+    pred = pred
+  )
+}
+
+### Calling the function with our dataset
+# The "recompute" test is because cross-validation is very intensive computationally.
+# Therefore, we save the cross-validation output and, if we are happy with that, we just read it.
+str(train.1m)
+str(beer.train)
+recompute <- TRUE
+
+if (recompute) {
+  set.seed(144)
+  cv.all.1m.beer <- CV.recommender(beer.train, 10, 2:4)
+  
+} else {
+  load("cv_all_1m.RData")
+}
+cv.info.1m.beer <- cv.all.1m.beer$info
+cv.pred.1m.beer <- cv.all.1m.beer$pred
+cv.pred9.beer <- cv.pred.1m.beer[[2]]  # Cross-validation predictions with rank 9
+
+### Plotting the cross-validation output
+cv.all.1m.beer$info$SEETP
+
+print(ggplot(cv.info.1m.beer, aes(x=rank, y=r2)) +
+        geom_point(size=3) +
+        theme_bw() +
+        xlab("Number of archetypes (k)") +
+        ylab("Cross-Validation R2") +
+        theme(axis.title=element_text(size=18), axis.text=element_text(size=18)))
+
+
+### Final model, using results from cross-validation
+
+mat.final <- Incomplete(train.1m[, 1], train.1m[, 2], train.1m[, 3])
+
+set.seed(144)
+fit <- softImpute(mat.final, rank.max=9, lambda=0, maxit=1000)
+
+
+
+
+# -----
+fold <- sample(seq_len(2), nrow(movie.1m), replace = TRUE)
+pred <-
+  replicate(2, rep(NA, nrow(movie.1m)), simplify = FALSE)
+minimum <- min(movie.1m[, 3])
+maximum <- max(movie.1m[, 3])
+for (f in seq_len(folds)) {
+  print(f)
+  mat <- Incomplete(movie.1m[fold != 1, 1], movie.1m[fold != 1, 2],
+                    movie.1m[fold != 1, 3])
+  for (r in seq_along(ranks)) {
+    fit <- softImpute(mat,
+                      rank.max = 3,
+                      lambda = 0,
+                      maxit = 1000)
+    # fit$u returns the weights for all user-archetype pairs
+    # fit$v returns an indicator of the ratings for all archetype-movie pairs
+    
+    pred[[r]][fold == f] <-
+      pmin(pmax(impute(fit, dat[fold == f, 1], dat[fold == f, 2]), minimum), maximum)
+  }
+}
+# baseline: predict the average movie rating for all user-movie pairs
+base.fold <-
+  sapply(seq_len(folds), function(f)
+    mean(dat[fold != f, 3]))
