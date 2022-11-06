@@ -158,26 +158,26 @@ FPR
 # ----------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------
 
+# Import the data set.
 beer.df = read.csv("AE-FinalProj-data/beer_reviews.csv")
 str(beer.df)
 
-#uniqueID <- unique(beer.df$review_profilename)
-#targetID <- sapply(split(beer.df, beer.df$review_profilename), function(x) nrow(x) >= 250)
-
-#beer_top_profiles <- beer.df[beer.df$review_profilename %in% uniqueID[targetID], , drop = FALSE]
-
-
+# Get the top profiles. 
 beer_top_profiles = beer.df %>% group_by(review_profilename) %>%
   filter(n() >= 100)
+# Get the top beers by number of ratings. 
 beer_top_beers = beer.df %>% group_by(beer_beerid) %>%
   filter(n() >= 50)
 str(beer_top_profiles)
+
+# Get the unique counts of the profiles and beers. 
 uniqueID.profiles <- unique(beer_top_profiles$review_profilename)
 uniqueID.beers <- unique(beer_top_beers$beer_beerid)
-
+# Remove all the profiles and beers that are small in number. 
 beer_top_profiles <- beer.df[beer.df$review_profilename %in% uniqueID.profiles[], , drop = FALSE]
 beer_final <- beer_top_profiles[beer_top_profiles$beer_beerid %in% uniqueID.beers[], , drop = FALSE]
 
+# GGPLOT to see the average ratings of beers.  
 beer_top_profiles %>%
   group_by(review_overall) %>%
   summarize(cases = n()) %>%
@@ -188,29 +188,35 @@ beer_top_profiles %>%
 beer_final = beer_final[beer_final$review_overall!= 0, ]
 beer_final = beer_final[beer_final$review_overall!= 0.5, ]
 
+# I commented these out. The 1 - 2.5 reviews are very few. 
+# This is causing us issues. 
+# beer_final = beer_final[beer_final$review_overall!= 1, ]
+# beer_final = beer_final[beer_final$review_overall!= 1.5, ]
 
+# beer_final = beer_final[beer_final$review_overall!= 2, ]
+# beer_final = beer_final[beer_final$review_overall!= 2.5, ]
 
-# First I need to get a subset of the data. This subset will have the username, beer name, and rankings 
+# Now we get a subset of the data. This subset will have the username, beer name, and rankings 
 beer.sub = beer_final[c("review_profilename", "beer_beerid", "review_overall")]
-beer.sub$review_id= as.numeric(factor(beer.sub$review_profilename))
+# Create a "user id" for the reviewers. This is necessary for the algo.
+beer.sub$review_id = as.numeric(factor(beer.sub$review_profilename))
 # Display with dependent variable first
 
+# Get the final subset. This is the data that will be fed into the recommender. 
 beer_sub_recommender = beer.sub[c("review_id", "beer_beerid", "review_overall")]
 beer_sub_recommender$review_overall = as.numeric(beer_sub_recommender$review_overall)
 #beer_sub_recommender$review_id = as.numeric(beer_sub_recommender$review_id)
 #beer_sub_recommender = beer_sub_recommender[order(beer_sub_recommender$review_id),]
 
+# Remove duplicate data. 
 beer_sub_recommender = beer_sub_recommender %>% distinct(review_id, beer_beerid, .keep_all = TRUE)
 
+# Split the data set. 
 set.seed(144)
 train.idx <- sample(seq_len(nrow(beer_sub_recommender)), 0.99*nrow(beer_sub_recommender))
 beer.train <- beer_sub_recommender[train.idx,]
 beer.test <- beer_sub_recommender[-train.idx,]
 
-#set.seed(123)
-#split = createDataPartition(beer_sub_recommender$review_id, p = 0.99, list = FALSE) 
-#beer.train = beer_sub_recommender[split, ]
-#beer.test = beer_sub_recommender[-split, ]
 head(beer.test)
 ### The following function performs collaborative filtering and cross-validation to find the appropriate rank (k)
 # dat: data frame of ratings
@@ -276,7 +282,7 @@ CV.recommender <- function(dat, folds, ranks) {
 ### Calling the function with our dataset
 # The "recompute" test is because cross-validation is very intensive computationally.
 # Therefore, we save the cross-validation output and, if we are happy with that, we just read it.
-str(train.1m)
+# str(train.1m)
 str(beer.train)
 recompute <- TRUE
 
@@ -308,9 +314,6 @@ mat.final <- Incomplete(train.1m[, 1], train.1m[, 2], train.1m[, 3])
 
 set.seed(144)
 fit <- softImpute(mat.final, rank.max=9, lambda=0, maxit=1000)
-
-
-
 
 # -----
 fold <- sample(seq_len(2), nrow(movie.1m), replace = TRUE)
