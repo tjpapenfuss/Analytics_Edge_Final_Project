@@ -27,7 +27,8 @@ library(stringr)
 # Import the data set.
 beer.df = read.csv("AE-FinalProj-data/beer_reviews.csv")
 str(beer.df)
-
+summary(beer.df)
+head(beer.df)
 # Get the top profiles. 
 beer_top_profiles = beer.df %>% group_by(review_profilename) %>%
   filter(n() >= 100)
@@ -171,13 +172,13 @@ print("SSE:")
 cv.all.1m.beer$info$SSE
 
 
-print(ggplot(cv.info.1m.beer, aes(x=rank, y=r2)) +
+ggplot(cv.info.1m.beer, aes(x=rank, y=r2)) +
   geom_point(size=3) +
   theme_bw() +
   xlab("Number of archetypes (k)") +
   ylab("Cross-Validation R2") +
-  theme(axis.title=element_text(size=18), axis.text=element_text(size=18)))
-ggsave("sample_graphs/R2_graph_10.png")
+  theme(axis.title=element_text(size=18), axis.text=element_text(size=18))
+ggsave("sample_graphs/R2_graph_10_run3.png")
 
 
 ### Final model, using results from cross-validation
