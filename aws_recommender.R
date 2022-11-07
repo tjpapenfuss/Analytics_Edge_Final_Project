@@ -11,8 +11,8 @@
 ##### 
 # ----------------------------------------------------------------------------------------
 ##### install.packages("package_name")
-##### $ scp -i "tanner_key.pem" ec2-user@ec2-3-87-239-15.compute-1.amazonaws.com:new_AE/Analytics_Edge_Final_Project/sample_graphs/*.png . 
-##### ssh -i "tanner_key.pem" ec2-user@ec2-3-87-239-15.compute-1.amazonaws.com
+##### $ scp -i "tanner_key.pem" ec2-user@ec2-54-234-46-153.compute-1.amazonaws.com:new_AE/Analytics_Edge_Final_Project/sample_graphs/*.png . 
+##### ssh -i "tanner_key.pem" ec2-user@ec2-54-234-46-153.compute-1.amazonaws.com
 # ----------------------------------------------------------------------------------------
 
 library(caret)
@@ -157,7 +157,7 @@ recompute <- TRUE
 
 if (recompute) {
   set.seed(144)
-  cv.all.1m.beer <- CV.recommender(beer.train, 15, 1:15)
+  cv.all.1m.beer <- CV.recommender(beer.train, 10, 1:15)
   
 } else {
   load("cv_all_1m.RData")
