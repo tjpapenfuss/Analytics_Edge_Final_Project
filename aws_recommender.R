@@ -119,12 +119,12 @@ CV.recommender <- function(dat, folds, ranks) {
   base.fold <-
     sapply(seq_len(folds), function(f)
       mean(dat[fold != f, 3]))
-  print("Here are the values: ")
-  print(dat[,3])
-  print("Base fold")
-  print(base.fold[f])
-  print("pred:")
-  print(pred)
+  #print("Here are the values: ")
+  #print(dat[,3])
+  #print("Base fold")
+  #print(base.fold[f])
+  #print("pred:")
+  #print(pred)
   list(
     info = data.frame(
       rank = ranks,
@@ -171,12 +171,13 @@ print("SSE:")
 cv.all.1m.beer$info$SSE
 
 
-ggplot(cv.info.1m.beer, aes(x=rank, y=r2)) +
+print(ggplot(cv.info.1m.beer, aes(x=rank, y=r2)) +
   geom_point(size=3) +
   theme_bw() +
   xlab("Number of archetypes (k)") +
   ylab("Cross-Validation R2") +
-  theme(axis.title=element_text(size=18), axis.text=element_text(size=18))
+  theme(axis.title=element_text(size=18), axis.text=element_text(size=18)))
+ggsave("sample_graphs/R2_graph_10.png")
 
 
 ### Final model, using results from cross-validation

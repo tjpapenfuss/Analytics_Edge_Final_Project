@@ -306,6 +306,7 @@ ggplot(cv.info.1m.beer, aes(x=rank, y=r2)) +
         xlab("Number of archetypes (k)") +
         ylab("Cross-Validation R2") +
         theme(axis.title=element_text(size=18), axis.text=element_text(size=18))
+ggsave("sample_graphs/R2_graph.png")
 
 
 ### Final model, using results from cross-validation
