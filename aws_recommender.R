@@ -161,7 +161,7 @@ if (recompute) {
 }
 cv.info.1m.beer <- cv.all.1m.beer$info
 cv.pred.1m.beer <- cv.all.1m.beer$pred
-cv.pred9.beer <- cv.pred.1m.beer[[2]]  # Cross-validation predictions with rank 9
+cv.pred9.beer <- cv.pred.1m.beer[[9]]  # Cross-validation predictions with rank 9
 
 ### Plotting the cross-validation output
 
