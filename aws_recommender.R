@@ -11,6 +11,8 @@
 ##### 
 # ----------------------------------------------------------------------------------------
 ##### install.packages("package_name")
+##### $ scp -i "tanner_key.pem" ec2-user@ec2-3-87-239-15.compute-1.amazonaws.com:new_AE/Analytics_Edge_Final_Project/sample_graphs/*.png . 
+##### ssh -i "tanner_key.pem" ec2-user@ec2-3-87-239-15.compute-1.amazonaws.com
 # ----------------------------------------------------------------------------------------
 
 library(caret)
@@ -31,7 +33,7 @@ summary(beer.df)
 head(beer.df)
 # Get the top profiles. 
 beer_top_profiles = beer.df %>% group_by(review_profilename) %>%
-  filter(n() >= 100)
+  filter(n() >= 50)
 # Get the top beers by number of ratings. 
 beer_top_beers = beer.df %>% group_by(beer_beerid) %>%
   filter(n() >= 50)
@@ -52,8 +54,8 @@ beer_top_profiles %>%
   theme_minimal() + scale_x_continuous(breaks = 0:5) 
 
 #Remove the 0 and 0.5 review outliers. 
-beer_final = beer_final[beer_final$review_overall!= 0, ]
-beer_final = beer_final[beer_final$review_overall!= 0.5, ]
+#beer_final = beer_final[beer_final$review_overall!= 0, ]
+#beer_final = beer_final[beer_final$review_overall!= 0.5, ]
 
 # I commented these out. The 1 - 2.5 reviews are very few. 
 # This is causing us issues. 
@@ -90,9 +92,9 @@ head(beer.test)
 # folds: number of folds for k-fold cross-validation
 # ranks: all the ranks to be tested
 # dat should have the following form:
-# first column: user id
-# second column: movie id
-# third column: ratings
+# first column: review id
+# second column: beer id
+# third column: review_overall
 CV.recommender <- function(dat, folds, ranks) {
   fold <- sample(seq_len(folds), nrow(dat), replace = TRUE)
   pred <-
@@ -155,7 +157,7 @@ recompute <- TRUE
 
 if (recompute) {
   set.seed(144)
-  cv.all.1m.beer <- CV.recommender(beer.train, 10, 1:20)
+  cv.all.1m.beer <- CV.recommender(beer.train, 15, 1:15)
   
 } else {
   load("cv_all_1m.RData")
@@ -178,7 +180,7 @@ ggplot(cv.info.1m.beer, aes(x=rank, y=r2)) +
   xlab("Number of archetypes (k)") +
   ylab("Cross-Validation R2") +
   theme(axis.title=element_text(size=18), axis.text=element_text(size=18))
-ggsave("sample_graphs/R2_graph_10_run3.png")
+ggsave("sample_graphs/R2_graph_10_run4.png")
 
 
 ### Final model, using results from cross-validation
