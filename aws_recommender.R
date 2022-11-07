@@ -10,6 +10,9 @@
 ##### Predicting beer score for a brewery releasing a new beer via logistic regression
 ##### 
 # ----------------------------------------------------------------------------------------
+##### install.packages("package_name")
+# ----------------------------------------------------------------------------------------
+
 library(caret)
 library(rpart)
 library(rpart.plot) 
@@ -20,7 +23,7 @@ library(gdata)
 library(softImpute)
 library(ggplot2)
 library(stringr)
-library(tidyverse)
+# library(tidyverse)
 # Import the data set.
 beer.df = read.csv("AE-FinalProj-data/beer_reviews.csv")
 str(beer.df)
