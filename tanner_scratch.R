@@ -300,31 +300,36 @@ cv.pred9.beer <- cv.pred.1m.beer[[2]]  # Cross-validation predictions with rank 
 ### Plotting the cross-validation output
 cv.all.1m.beer$info$SEETP
 
-print(ggplot(cv.info.1m.beer, aes(x=rank, y=r2)) +
+ggplot(cv.info.1m.beer, aes(x=rank, y=r2)) +
         geom_point(size=3) +
         theme_bw() +
         xlab("Number of archetypes (k)") +
         ylab("Cross-Validation R2") +
-        theme(axis.title=element_text(size=18), axis.text=element_text(size=18)))
+        theme(axis.title=element_text(size=18), axis.text=element_text(size=18))
 
 
 ### Final model, using results from cross-validation
 
-mat.final <- Incomplete(train.1m[, 1], train.1m[, 2], train.1m[, 3])
+mat.final <- Incomplete(beer.train[, 1], beer.train[, 2], beer.train[, 3])
 
 set.seed(144)
 fit <- softImpute(mat.final, rank.max=9, lambda=0, maxit=1000)
 
-# -----
-fold <- sample(seq_len(2), nrow(movie.1m), replace = TRUE)
+
+
+
+# ----------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------
+fold <- sample(seq_len(2), nrow(beer_sub_recommender), replace = TRUE)
 pred <-
-  replicate(2, rep(NA, nrow(movie.1m)), simplify = FALSE)
-minimum <- min(movie.1m[, 3])
-maximum <- max(movie.1m[, 3])
+  replicate(2, rep(NA, nrow(beer_sub_recommender)), simplify = FALSE)
+minimum <- min(beer_sub_recommender[, 3])
+maximum <- max(beer_sub_recommender[, 3])
 for (f in seq_len(folds)) {
   print(f)
-  mat <- Incomplete(movie.1m[fold != 1, 1], movie.1m[fold != 1, 2],
-                    movie.1m[fold != 1, 3])
+  mat <- Incomplete(beer_sub_recommender[fold != 1, 1], beer_sub_recommender[fold != 1, 2],
+                    beer_sub_recommender[fold != 1, 3])
   for (r in seq_along(ranks)) {
     fit <- softImpute(mat,
                       rank.max = 3,
