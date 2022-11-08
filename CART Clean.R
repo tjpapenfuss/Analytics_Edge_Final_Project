@@ -106,7 +106,7 @@ calc.OSR2(t.pred, df$review_overall, df$review_overall)
 cv.tree = train(review_overall ~ +brewery_name+beer_style+beer_abv,
                  data = df,
                  method="rpart",
-                 tuneGrid=data.frame(cp=seq(0, 0.005, 0.001)),
+                 tuneGrid=data.frame(cp=seq(0, 0.0005, 0.0001)),
                  trControl=trainControl(method="cv", number=10))
 cv.tree #The results recommend cp = 0? Is this right?
 
@@ -125,7 +125,7 @@ rf.cv = train(review_overall ~ +brewery_name+beer_style+beer_abv,
               method="rf", nodesize=25, ntree=10,
               importance = TRUE,
               trControl=trainControl(method="cv", number=5),
-              tuneGrid=data.frame(mtry=seq(0,30,5)))
+              tuneGrid=data.frame(mtry=seq(10,20,1)))
 rf.cv
 
 #Plotting mtry for random forest
