@@ -111,18 +111,20 @@ cv.tree = train(review_overall ~ +brewery_name+beer_style+beer_abv,
 cv.tree #The results recommend cp = 0? Is this right?
 
 #Plotting the results of cp
-print(ggplot(cv.tree$results, aes(x=cp, y=Rsquared)) +
+ggplot(cv.tree$results, aes(x=cp, y=Rsquared)) +
         geom_point(size=3) +
         theme_bw() +
         ylab("Cross-Validation R^2") +
         scale_x_continuous(breaks=0:1, name="cp") +
-        theme(axis.title=element_text(size=18), axis.text=element_text(size=18)))
+        theme(axis.title=element_text(size=18), axis.text=element_text(size=18))
+ggsave("sample_graphs/R2_cp_CART.png")
+
 
 ##Here is the random forest piece of the code. I have ntree set pretty low
 ##right now for the initial runs. Need to bump back up to 89 or so.
 rf.cv = train(review_overall ~ +brewery_name+beer_style+beer_abv,
               data = df,
-              method="rf", nodesize=25, ntree=10,
+              method="rf", nodesize=25, ntree=80,
               importance = TRUE,
               trControl=trainControl(method="cv", number=5),
               tuneGrid=data.frame(mtry=seq(10,20,1)))
