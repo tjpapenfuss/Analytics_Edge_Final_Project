@@ -1,6 +1,14 @@
 What is our plan for training and test sets?
 
-What sis the level of correlation between 'review_'
+What defines a good beer?
+
+What is the level of correlation between 'review_'
+                  review_overall review_aroma review_appearance review_palate review_taste
+review_overall         1.0000000    0.6160131         0.5017324     0.7019139    0.7898156
+review_aroma           0.6160131    1.0000000         0.5610290     0.6169469    0.7167761
+review_appearance      0.5017324    0.5610290         1.0000000     0.5666339    0.5469804
+review_palate          0.7019139    0.6169469         0.5666339     1.0000000    0.7341351
+review_taste           0.7898156    0.7167761         0.5469804     0.7341351    1.0000000
 
 Can we utilize the reviewer in any way?
 	-Check into top x reviews
