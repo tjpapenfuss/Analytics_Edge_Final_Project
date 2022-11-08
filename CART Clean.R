@@ -8,7 +8,7 @@ library(gdata)
 library(stringr)
 
 # The below code reads in all beers.
-beer.df = read.csv("beer_reviews.csv")
+beer.df = read.csv("AE-FinalProj-data/beer_reviews.csv")
 count(beer.df)
 # The below code will remove the NaNs.
 beer.df = na.omit(beer.df)
