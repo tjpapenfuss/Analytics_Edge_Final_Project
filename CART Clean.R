@@ -131,10 +131,11 @@ rf.cv = train(review_overall ~ +brewery_name+beer_style+beer_abv,
 rf.cv
 
 #Plotting mtry for random forest
-#print(ggplot(rf.cv$results, aes(x=mtry, y=Rsquared)) +
-        #geom_point(size=3) +
-        #theme_bw() +
-        #ylab("Cross-Validation R^2") +
-        #scale_x_continuous(breaks=1:10, name="mtry") +
-        #theme(axis.title=element_text(size=18), axis.text=element_text(size=18)))
+ggplot(rf.cv$results, aes(x=mtry, y=Rsquared)) +
+        geom_point(size=3) +
+        theme_bw() +
+        ylab("Cross-Validation R^2") +
+        scale_x_continuous(breaks=1:10, name="mtry") +
+        theme(axis.title=element_text(size=18), axis.text=element_text(size=18))
+ggsave("sample_graphs/R2_cp_RF.png")
 
