@@ -11,8 +11,8 @@
 ##### 
 # ----------------------------------------------------------------------------------------
 ##### install.packages("package_name")
-##### $ scp -i "tanner_key.pem" ec2-user@ec2-3-83-235-132.compute-1.amazonaws.com:new_AE/Analytics_Edge_Final_Project/sample_graphs/*.png . 
-##### ssh -i "tanner_key.pem" ec2-user@ec2-3-83-235-132.compute-1.amazonaws.com
+##### $ scp -i "tanner_key.pem" ec2-user@ec2-52-55-16-71.compute-1.amazonaws.com:new_AE/Analytics_Edge_Final_Project/sample_graphs/*.png . 
+##### ssh -i "tanner_key.pem" ec2-user@ec2-52-87-240-18.compute-1.amazonaws.com
 # ----------------------------------------------------------------------------------------
 
 library(caret)

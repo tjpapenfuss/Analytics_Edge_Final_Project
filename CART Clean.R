@@ -124,7 +124,7 @@ ggsave("sample_graphs/R2_cp_CART.png")
 ##right now for the initial runs. Need to bump back up to 89 or so.
 rf.cv = train(review_overall ~ +brewery_name+beer_style+beer_abv,
               data = df,
-              method="rf", nodesize=25, ntree=20,
+              method="rf", nodesize=25, ntree=10,
               importance = TRUE,
               trControl=trainControl(method="cv", number=5),
               tuneGrid=data.frame(mtry=seq(10,20,1)))
