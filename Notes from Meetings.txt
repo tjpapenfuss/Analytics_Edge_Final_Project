@@ -18,3 +18,10 @@ Review score via CART
 
 Logistic Regression to predict next beer release
 	-Top x brewers by count
+
+
+When doing CART Regression the CP value is coming out to zero. Is this a red flag that we may be doing something wrong?
+
+Are we graded off our model performance or are we grading on our approach or methodolgy going about the problem?
+
+Random forest, unable to run past ntree of 10. Any thoughts here?

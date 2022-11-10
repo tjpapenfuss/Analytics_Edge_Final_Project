@@ -8,7 +8,7 @@ library(gdata)
 library(stringr)
 
 # The below code reads in all beers.
-beer.df = read.csv("AE-FinalProj-data/beer_reviews.csv")
+beer.df = read.csv("beer_reviews.csv")
 count(beer.df)
 # The below code will remove the NaNs.
 beer.df = na.omit(beer.df)
@@ -55,7 +55,47 @@ df.filter2 = filter(df.filter, brewery_name %in% c("Sierra Nevada Brewing Co.",
                                                    "Great Lakes Brewing Company",
                                                    "Flying Dog Brewery", 
                                                    "Harpoon Brewery",
-                                                   "Surly Brewing Company"
+                                                   "Surly Brewing Company",
+                                                   "Anchor Brewing Company",
+                                                   "Full Sail Brewery & Tasting Room & Pub",
+                                                   "Boulder Beer / Wilderness Pub",
+                                                   "Pabst Brewing Company",
+                                                   "Firestone Walker Brewing Co.",
+                                                   "Oskar Blues Grill & Brew",
+                                                   "Miller Brewing Co.",
+                                                   "Boulevard Brewing Co.",
+                                                   "The Lost Abbey",
+                                                   "BrewDog",
+                                                   "Matt Brewing Company",
+                                                   "Ithaca Beer Company",
+                                                   "Tyranena Brewing Company",
+                                                   "New Holland Brewing Company",
+                                                   "Breckenridge Brewery",
+                                                   "Odell Brewing Company",
+                                                   "Brasserie Dieu Du Ciel",
+                                                   "Dark Horse Brewing Company",
+                                                   "Short's Brewing Company",
+                                                   "Alpine Beer Company",
+                                                   "Otter Creek Brewing / Wolaver's",
+                                                   "Redhook Ale Brewery",
+                                                   "Widmer Brothers Brewing Company",
+                                                   "Coors Brewing Company",
+                                                   "Heavy Seas Beer",
+                                                   "Brooklyn Brewery",
+                                                   "New Glarus Brewing Company",
+                                                   "Central Waters Brewing Company",
+                                                   "Mendocino Brewing Company",
+                                                   "Hair of the Dog Brewing Company / Brewery and Tasting Room",
+                                                   "Anderson Valley Brewing Company",
+                                                   "Genesee Brewing Co. / Dundee Brewing Co.",
+                                                   "Stoudts Brewing Co.",
+                                                   "Yuengling Brewery",
+                                                   "North Coast Brewing Co.",
+                                                   "Moylan's Brewery",
+                                                   "Big Sky Brewing Company",
+                                                   "Highland Brewing",
+                                                   "SweetWater Brewing Company",
+                                                   "Kona Brewing Co."
                                                    ))
 
 
@@ -69,7 +109,7 @@ beer.test = df.filter2[-split, ]
 #Subset the data frame to only use columns we are interested in using as predictors
 df = subset(df.filter2, select = -c(review_time,review_taste, review_palate,
                                    beer_name,beer_beerid, review_profilename,
-                                   review_aroma, review_appearance, brewery_id))
+                                    review_aroma,review_appearance, brewery_id))
 
 #Set the categorical variables -->Check the resulting class of variables
 #df$beer_style = as.factor(df$beer_style)
@@ -77,7 +117,7 @@ df = subset(df.filter2, select = -c(review_time,review_taste, review_palate,
 str(df)
 
 # Data frame @ 283k samples
-# Standard linear regression [R2=0.13]
+# Standard linear regression [R2=0.15!]
 regressor = lm(review_overall ~ ., data = df)
 summary(regressor)
 
