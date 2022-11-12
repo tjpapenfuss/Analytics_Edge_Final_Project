@@ -238,7 +238,7 @@ auc <- performance(pr, measure = "auc")
 auc <- auc@y.values[[1]]
 auc
 
-0.8647186
+0.8647186 #(to be deleted or updated)
 
 
 
