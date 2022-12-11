@@ -283,6 +283,7 @@ prf0.8 <- performance(pr0.8, measure = "tpr", x.measure = "fpr")
 
 confusion.matrix = table(beer.test$review_overall, pred.test.0.8)
 confusion.matrix
+Accuracy.test = mean(pred.test.0.8!= beer.test$review_overall)
 
 TPR <- confusion.matrix[2,2]/sum(confusion.matrix[2,])
 TPR
